@@ -1,1 +1,1 @@
-web: gunicorn -w 4 -b 0.0.0.0:$PORT -k gevent main:app
+web: uvicorn main:app --host=127.0.0.1 -- port=${PORT:-5000}
