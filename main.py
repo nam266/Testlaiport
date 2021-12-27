@@ -1,10 +1,14 @@
 from fastapi import FastAPI
+from app.routers import auth_router, post_router, comment_router
+from app.utils.exception_handler import custom_exception_handler
+from app.utils.cors_handler import handle_cors
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI()
+app.include_router(auth_router.router, prefix= "/it4788")
+app.include_router(post_router.router, prefix= "/it4788")
+app.include_router(comment_router.router, prefix= "/it4788")
 
-#domain where this api is hosted for example : localhost:5000/docs to see swagger documentation automagically generated.
-
-
-@app.get("/")
-def home():
-    return {"message":"Hello TutLinks.com"}
+handle_cors(app)
+custom_exception_handler(app)
