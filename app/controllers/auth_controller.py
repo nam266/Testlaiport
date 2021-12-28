@@ -1,4 +1,5 @@
 from fastapi import HTTPException
+from app.models.user import User
 from app.repositories import user_repo
 from app.auth.auth import AuthHandler
 from app.schemas.auth import LoginRequest, SignupRequest
