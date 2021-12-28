@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import auth_router
+from app.routers import auth_router, post_router, comment_router
 from app.utils.exception_handler import custom_exception_handler
 from app.utils.cors_handler import handle_cors
 from fastapi.middleware.cors import CORSMiddleware
