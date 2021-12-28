@@ -1,6 +1,7 @@
 from fastapi import security
 from fastapi.param_functions import Depends
 import jwt
+from jose import JWTError, jwt
 from fastapi import HTTPException, Security, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer, OAuth2PasswordBearer
 from passlib.context import CryptContext
