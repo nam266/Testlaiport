@@ -1,20 +1,15 @@
 from fastapi import security
-from fastapi.param_functions import Depends
-from jose import JWTError, jwt
-from fastapi import HTTPException, Security, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer, OAuth2PasswordBearer
+import jwt
+from fastapi import HTTPException, Security
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from passlib.context import CryptContext
-from app.repositories import user_repo
 from datetime import datetime, timedelta
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
-SECRET = 'SECRET'
-ALGORITHM = 'HS256'
 class AuthHandler():
     sercurity = HTTPBearer()
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-    
+    secret = 'SECRET'
 
     def get_password_hash(self, password):
         return self.pwd_context.hash(password)
@@ -30,17 +25,16 @@ class AuthHandler():
             'user_id': user_id
         }
         return jwt.encode(
-            payload,
-            key=SECRET,
-            algorithm=ALGORITHM
+            payload= payload,
+            key=self.secret,
+            algorithm='HS256'
         )
     def decode_token(self, token):
         try:
-            payload = jwt.decode(token, key= SECRET , algorithms=[ALGORITHM])
+            payload = jwt.decode(token, key= self.secret, algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
             raise HTTPException(status_code=401, detail='Signature has expired')
-        except jwt.JWTError as e:
+        except jwt.InvalidTokenError as e:
             raise HTTPException(status_code=401, detail='Invalid token')
-        return payload
     def auth_wrapper(self, auth : HTTPAuthorizationCredentials = Security(security)):
         return self.decode_token(auth.credentials)
