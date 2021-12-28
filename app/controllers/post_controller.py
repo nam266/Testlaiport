@@ -1,5 +1,5 @@
 from app.schemas.post import ReportPost, PostRequest, ListPostRequest
-from app.repositories import post_repo, reported_post_repo, user_repo
+from app.repositories import post_repo, reported_post_repo, user_repo, comment_repo
 from app.auth.auth import AuthHandler
 from app.utils.response import ResponseModel, ErrorResponseModel
 
@@ -62,6 +62,7 @@ def get_list_post(request : ListPostRequest):
 
 def delete_post(post_id : str):
 	post_repo.delete_post(post_id)
+	comment_repo.delete_by_post_id(post_id)
 	return ok()
 
 def report_post(report_post_req : ReportPost):
