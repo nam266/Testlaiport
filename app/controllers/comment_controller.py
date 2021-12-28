@@ -1,6 +1,5 @@
 from calendar import c
-from app.schemas.comment import GetCommentRequest
-from app.schemas.comment import CommentRequest
+from app.schemas.comment import CommentRequest, GetCommentRequest, EditCommentRequest, DeleteCommentRequest
 from app.repositories import comment_repo, user_repo, post_repo
 from app.auth.auth import AuthHandler
 from app.utils.response import ResponseModel, ErrorResponseModel
@@ -29,6 +28,32 @@ def get_list_comment(get_comment_req : GetCommentRequest):
         comment_response = get_comment_response(result.to_dict(),'get_list')
         list_comment_res.append(comment_response)
     return list_comment_res
+
+def delete_comment(del_comment_req : DeleteCommentRequest):
+    if post_repo.find_by_id(del_comment_req.id) is None:
+        # raise HTTPException(status_code=400, detail='9992')
+        return ErrorResponseModel(None, 9992,message='9992')
+    cur_user = auth_handler.decode_token(del_comment_req.token)
+    cur_comment = comment_repo.find_comment_by_id(del_comment_req.id_com)
+    if cur_comment['post_id'] == del_comment_req.id and cur_user['phonenumber'] == cur_comment['poster']['id']:
+        comment_repo.delete_comment(del_comment_req.id_com)
+        return ResponseModel(1000,'Success',data=None)
+    else: 
+        return ErrorResponseModel(None,1009,message='1009')
+
+def edit_comment(edit_comment_req : EditCommentRequest):
+    if post_repo.find_by_id(edit_comment_req.id) is None:
+        # raise HTTPException(status_code=400, detail='9992')
+        return ErrorResponseModel(None,9992,message='9992')
+    try:
+        edit_comment_dict = vars(edit_comment_req)
+        cur_comment = comment_repo.find_comment_by_id(edit_comment_dict['id_com'])
+        cur_user = auth_handler.decode_token(edit_comment_dict['token'])
+        if (cur_user['phonenumber'] == cur_comment['poster']['id']):
+            comment_repo.edit_comment(edit_comment_dict['id_com'], edit_comment_dict['comment'])
+            return ResponseModel(1000,'Success',data=None)
+    except:
+        return ErrorResponseModel(None,9999,message='9999')
 
 def get_comment_response(comment_dict : dict, process : str):
     payload = auth_handler.decode_token(comment_dict['token'])
