@@ -6,7 +6,6 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer, OAuth2Pas
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 SECRET = 'SECRET'

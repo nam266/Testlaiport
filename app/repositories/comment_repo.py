@@ -11,12 +11,12 @@ def create(comment : dict):
     comment_doc.set(comment)
     return comment_doc.get().to_dict()
 
-def get_list_comment(post_id : str, index : int, count : int):
+def get_list_comment(post_id : str, index : str, count : str):
     query = comment_ref.where(u'post_id','==',post_id).order_by(
         u'created', direction=firestore.Query.DESCENDING).limit(int(count))
     results = query.stream()
     return results
-  
+
 def find_comment_by_id(id_com : str):
     return comment_ref.document(id_com).get().to_dict()
 
